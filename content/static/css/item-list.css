@@ -1,0 +1,36 @@
+.item-list {
+    margin-left: 16px;
+    margin-top: 32px;
+    padding-top: 14px;
+    margin-right: 64px;
+    border-top: 2px solid #0b77e3;
+    border-left: 2px solid #0b77e3;
+    border-top-left-radius: 16px;
+    padding-left: 14px;
+}
+
+.item-list div {
+    padding-bottom: 8px;
+    display: block;
+}
+
+.item-wrapper a {
+    color: #000000;
+    font-style: normal;
+    text-decoration: none;
+}
+
+.item-date {
+    display: inline-block;
+    width: 120px;
+}
+
+.item-fav {
+    display: inline-block;
+    width: 16px;
+}
+
+.item-title {
+    display: inline-block;
+    padding-left: 16px;
+}

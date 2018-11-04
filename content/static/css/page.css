@@ -1,0 +1,11 @@
+.page {
+    width: 1000px;
+    background-color: #fff;
+    margin: auto;
+    font-family: 'Open Sans',sans-serif;
+    padding-bottom: 32px;
+}
+
+body {
+    background-color: #113e6c !important;
+}

@@ -1,0 +1,49 @@
+.navbar {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-bottom: 3px solid #ffffff;
+    background-color: #0c76e3 !important;
+    color: #ffffff;
+}
+
+.header {
+    font-size: 48px;
+    font-weight: 800;
+    font-family: 'Open Sans',sans-serif;
+    padding: 16px 0px 0px 16px;
+}
+
+.links {
+    font-size: 24px;
+    font-family: sans-serif;
+    padding: 0px 0px 16px 16px;
+    margin: 8px 0px 8px 0px;
+}
+
+.navbar a {
+    outline: 0;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.navbar ul {
+    list-style-type: none;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar li {
+    float: left;
+}
+
+.navbar li a {
+    display: block;
+    margin-right: 16px;
+}
+
+.navbar li a:hover {
+    color: #dddddd;
+}

@@ -1,6 +1,9 @@
 package storage
 
-import "bla/models"
+import (
+	"bla/models"
+	_ "github.com/mattn/go-sqlite3"
+)
 
 const sqlGetAllPosts string = `SELECT tag, title, published FROM posts`
 const sqlGetAllFavoritePosts string = `SELECT tag, title, published FROM posts WHERE is_favorite = TRUE`
@@ -11,6 +14,7 @@ const sqlCreatePost string = `INSERT INTO posts (id, tag, title, content_md, con
 const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ?`
 
 func GetAllPosts() (*[]models.PostLite, error) {
+	//db, err := sql.Open("sqlite3", "./content/data/bla.db")
 	rows, err := readDB.Query(sqlGetAllPosts)
 	if err != nil {
 		return nil, err

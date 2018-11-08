@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-func Check(err error, w http.ResponseWriter) bool {
+func check(err error, statusCode int, message string, w http.ResponseWriter) bool {
 	if err != nil {
-		log.Print(err)
-		w.WriteHeader(404)
-		fmt.Fprint(w, "404: page not found")
+		log.Printf("Error: %v", err)
+		w.WriteHeader(statusCode)
+		fmt.Fprint(w, message)
 		return true
 	}
 	return false

@@ -12,42 +12,42 @@ func Initialize() error {
 	if err != nil {
 		return err
 	}
-
-	writeDB, err := readDB.Begin()
+	readDB.SetMaxIdleConns(256)
+	err = readDB.Ping()
 	if err != nil {
-		writeDB.Rollback()
 		return err
 	}
 
-	if err = initializePosts(writeDB); err != nil {
-		writeDB.Rollback()
+	if err != nil {
 		return err
 	}
 
-	if err = initializeUsers(writeDB); err != nil {
-		writeDB.Rollback()
+	if err = initializePosts(readDB); err != nil {
 		return err
 	}
 
-	if err = initializeImages(writeDB); err != nil {
-		writeDB.Rollback()
+	if err = initializeUsers(readDB); err != nil {
 		return err
 	}
 
-	return writeDB.Commit()
+	if err = initializeImages(readDB); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func initializePosts(db *sql.Tx) error {
+func initializePosts(db *sql.DB) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS posts (
-			id BLOB PRIMARY KEY,
+			id BLOB NOT NULL PRIMARY KEY,
 			tag TEXT,
   			title TEXT,
   			content_md TEXT,
 			content_html TEXT,
 			published TIMESTAMP,
 			edited TIMESTAMP,
-			is_favorite BOOLEAN,
+			is_favorite INTEGER,
   			author BLOB
 		);
 	`
@@ -57,10 +57,10 @@ func initializePosts(db *sql.Tx) error {
 	return err
 }
 
-func initializeUsers(db *sql.Tx) error {
+func initializeUsers(db *sql.DB) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS users (
-			id BLOB PRIMARY KEY,
+			id BLOB NOT NULL PRIMARY KEY,
 			first_name TEXT,
 			last_name TEXT,
 			email TEXT,
@@ -77,10 +77,10 @@ func initializeUsers(db *sql.Tx) error {
 	return err
 }
 
-func initializeImages(db *sql.Tx) error {
+func initializeImages(db *sql.DB) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS images (
-			id BLOB PRIMARY KEY,
+			id BLOB NOT NULL PRIMARY KEY,
 			uploaded TIMESTAMP,
 			path TEXT	
 		);

@@ -1,21 +1,24 @@
 package server
 
 import (
+	"bla/models"
 	"bla/storage"
 	"encoding/json"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"net/http"
 )
 
 func handleGetAllPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	posts, err := storage.GetAllPosts()
-	if Check(err, w) {
+	if check(err, 404, "Posts not found", w) {
 		return
 	}
 
 	jsonPosts, err := json.Marshal(posts)
-	if Check(err, w) {
+	if check(err, 500, "Server error loading posts", w) {
 		return
 	}
 
@@ -24,12 +27,12 @@ func handleGetAllPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 
 func handleGetAllFavoritePosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	posts, err := storage.GetAllFavoritePosts()
-	if Check(err, w) {
+	if check(err, 404, "Posts not found", w) {
 		return
 	}
 
 	jsonPosts, err := json.Marshal(posts)
-	if Check(err, w) {
+	if check(err, 500, "Server error loading post", w) {
 		return
 	}
 
@@ -38,7 +41,7 @@ func handleGetAllFavoritePosts(w http.ResponseWriter, r *http.Request, _ httprou
 
 func handleGetPostById(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	post, err := storage.GetPostById(p.ByName("id"))
-	if Check(err, w) {
+	if check(err, 404, "Couldn't get post", w) {
 		return
 	}
 
@@ -49,7 +52,7 @@ func handleGetPostById(w http.ResponseWriter, r *http.Request, p httprouter.Para
 
 func handleGetPostByTag(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	post, err := storage.GetPostByTag(p.ByName("tag"))
-	if Check(err, w) {
+	if check(err, 404, "Couldn't get post", w) {
 		return
 	}
 
@@ -59,9 +62,46 @@ func handleGetPostByTag(w http.ResponseWriter, r *http.Request, p httprouter.Par
 }
 
 func handleCreatePost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	body, err := ioutil.ReadAll(r.Body)
+	if check(err, 400, "Request body failed to be read", w) {
+		return
+	}
 
+	post := models.Post{}
+
+	err = json.Unmarshal(body, &post)
+	if check(err, 422, "Request body could not be parsed", w) {
+		return
+	}
+
+	id, err := uuid.NewV4()
+	if check(err, 500, "Error generating unique post ID", w) {
+		return
+	}
+
+	post.Id = id
+
+	err = storage.CreatePost(&post)
+	if check(err, 500, "Internal server error", w) {
+		return
+	}
 }
 
 func handleUpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	body, err := ioutil.ReadAll(r.Body)
+	if check(err, 400, "Request body failed to be read", w) {
+		return
+	}
 
+	post := models.Post{}
+
+	err = json.Unmarshal(body, &post)
+	if check(err, 422, "Request body could not be parsed", w) {
+		return
+	}
+
+	err = storage.UpdatePost(&post)
+	if check(err, 500, "Internal server error", w) {
+		return
+	}
 }

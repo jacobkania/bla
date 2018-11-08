@@ -1,10 +1,13 @@
 package initialize
 
-import "bla/storage"
+import (
+	"bla/storage"
+	"database/sql"
+)
 
-func Initialize() error {
+func Initialize(db *sql.DB) error {
 	// do all of the setup for first time running the application
-	if err := createDB(); err != nil {
+	if err := createDB(db); err != nil {
 		return err
 	}
 	if err := createConfig(); err != nil {
@@ -16,8 +19,8 @@ func Initialize() error {
 	return nil
 }
 
-func createDB() error {
-	return storage.Initialize()
+func createDB(db *sql.DB) error {
+	return storage.Initialize(db)
 }
 
 func createConfig() error {

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bla/models"
+	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -13,9 +14,9 @@ const sqlGetPostByTag string = `SELECT id, tag, title, content_md, content_html,
 const sqlCreatePost string = `INSERT INTO posts (id, tag, title, content_md, content_html, published, edited, is_favorite, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ?`
 
-func GetAllPosts() (*[]models.PostLite, error) {
+func GetAllPosts(db *sql.DB) (*[]models.PostLite, error) {
 	//db, err := sql.Open("sqlite3", "./content/data/bla.db")
-	rows, err := readDB.Query(sqlGetAllPosts)
+	rows, err := db.Query(sqlGetAllPosts)
 	if err != nil {
 		return nil, err
 	}
@@ -35,8 +36,8 @@ func GetAllPosts() (*[]models.PostLite, error) {
 	return &posts, nil
 }
 
-func GetAllFavoritePosts() (*[]models.PostLite, error) {
-	rows, err := readDB.Query(sqlGetAllFavoritePosts)
+func GetAllFavoritePosts(db *sql.DB) (*[]models.PostLite, error) {
+	rows, err := db.Query(sqlGetAllFavoritePosts)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +57,8 @@ func GetAllFavoritePosts() (*[]models.PostLite, error) {
 	return &posts, nil
 }
 
-func GetPostById(id string) (*models.Post, error) {
-	row := readDB.QueryRow(sqlGetPostById, id)
+func GetPostById(db *sql.DB, id string) (*models.Post, error) {
+	row := db.QueryRow(sqlGetPostById, id)
 
 	post := models.Post{}
 
@@ -69,8 +70,8 @@ func GetPostById(id string) (*models.Post, error) {
 	return &post, nil
 }
 
-func GetPostByTag(tag string) (*models.Post, error) {
-	row := readDB.QueryRow(sqlGetPostByTag, tag)
+func GetPostByTag(db *sql.DB, tag string) (*models.Post, error) {
+	row := db.QueryRow(sqlGetPostByTag, tag)
 
 	post := models.Post{}
 
@@ -82,8 +83,8 @@ func GetPostByTag(tag string) (*models.Post, error) {
 	return &post, nil
 }
 
-func CreatePost(post *models.Post) error {
-	writeDB, err := readDB.Begin()
+func CreatePost(db *sql.DB, post *models.Post) error {
+	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
 		return err
@@ -108,8 +109,8 @@ func CreatePost(post *models.Post) error {
 	return writeDB.Commit()
 }
 
-func UpdatePost(post *models.Post) error {
-	writeDB, err := readDB.Begin()
+func UpdatePost(db *sql.DB, post *models.Post) error {
+	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
 		return err

@@ -5,49 +5,42 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var readDB *sql.DB
-
-func Initialize() error {
-	readDB, err := sql.Open("sqlite3", "./content/data/bla.db")
+func Initialize(db *sql.DB) error {
+	writeDB, err := db.Begin()
 	if err != nil {
-		return err
-	}
-	readDB.SetMaxIdleConns(256)
-	err = readDB.Ping()
-	if err != nil {
+		writeDB.Rollback()
 		return err
 	}
 
-	if err != nil {
+	if err = initializePosts(writeDB); err != nil {
+		writeDB.Rollback()
 		return err
 	}
 
-	if err = initializePosts(readDB); err != nil {
+	if err = initializeUsers(writeDB); err != nil {
+		writeDB.Rollback()
 		return err
 	}
 
-	if err = initializeUsers(readDB); err != nil {
+	if err = initializeImages(writeDB); err != nil {
+		writeDB.Rollback()
 		return err
 	}
 
-	if err = initializeImages(readDB); err != nil {
-		return err
-	}
-
-	return nil
+	return writeDB.Commit()
 }
 
-func initializePosts(db *sql.DB) error {
+func initializePosts(db *sql.Tx) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS posts (
-			id BLOB NOT NULL PRIMARY KEY,
+			id BLOB PRIMARY KEY,
 			tag TEXT,
   			title TEXT,
   			content_md TEXT,
 			content_html TEXT,
 			published TIMESTAMP,
 			edited TIMESTAMP,
-			is_favorite INTEGER,
+			is_favorite BOOLEAN,
   			author BLOB
 		);
 	`
@@ -57,10 +50,10 @@ func initializePosts(db *sql.DB) error {
 	return err
 }
 
-func initializeUsers(db *sql.DB) error {
+func initializeUsers(db *sql.Tx) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS users (
-			id BLOB NOT NULL PRIMARY KEY,
+			id BLOB PRIMARY KEY,
 			first_name TEXT,
 			last_name TEXT,
 			email TEXT,
@@ -77,10 +70,10 @@ func initializeUsers(db *sql.DB) error {
 	return err
 }
 
-func initializeImages(db *sql.DB) error {
+func initializeImages(db *sql.Tx) error {
 	statement := `
 		CREATE TABLE IF NOT EXISTS images (
-			id BLOB NOT NULL PRIMARY KEY,
+			id BLOB PRIMARY KEY,
 			uploaded TIMESTAMP,
 			path TEXT	
 		);

@@ -2,17 +2,15 @@ package authentication
 
 import "golang.org/x/crypto/bcrypt"
 
-// returns hashedPw, salt, error
-func EncryptPassword(password string) (string, string, error) {
-	// salt := "" // TODO: Generate salt
+func EncryptPassword(password string) (string, error) {
 	hashedPw, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
-	return string(hashedPw), "", nil
+	return string(hashedPw), nil
 }
 
-func CheckPassword(hashedPw string /*salt string,*/, password string) bool {
+func CheckPassword(hashedPw string, password string) bool {
 	if len(hashedPw) == 0 {
 		return false
 	}

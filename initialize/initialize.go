@@ -50,9 +50,9 @@ func promptUserInfo(db *sql.DB) error {
 	fmt.Printf("Password: ")
 	password, _ := reader.ReadString('\n')
 
-	hashedPw, _ := authentication.EncryptPassword(password)
+	hashedPw, _ := authentication.EncryptPassword(password[:len(password)-1])
 
-	newUser, err := storage.CreateUser(db, firstName, lastName, email, location, catchPhrase, login, hashedPw)
+	newUser, err := storage.CreateUser(db, firstName[:len(firstName)-1], lastName[:len(lastName)-1], email[:len(email)-1], location[:len(location)-1], catchPhrase[:len(catchPhrase)-1], login[:len(login)-1], hashedPw)
 	if err != nil {
 		return err
 	}

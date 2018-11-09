@@ -232,6 +232,48 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3e868c11-95ff-489c-98c9-a877b2f3e08b",
+								"exec": [
+									"uuid = pm.response.json().at(0).id",
+									"",
+									"pm.environment.set(\"user_uuid_1\", uuid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"person\",\n\t\"password\":\"test123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -242,7 +284,7 @@
 	],
 	"variable": [
 		{
-			"id": "1b12ead0-5434-4149-ab78-0476ad8eaa28",
+			"id": "3a5fbb00-4d54-4595-9bd7-951f5e24ee57",
 			"key": "baseUrl",
 			"value": "http://localhost:8081",
 			"type": "string"

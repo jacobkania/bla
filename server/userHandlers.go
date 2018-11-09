@@ -1,11 +1,13 @@
 package server
 
 import (
+	"bla/authentication"
 	"bla/storage"
 	"database/sql"
 	"encoding/json"
 	"github.com/gofrs/uuid"
 	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -38,5 +40,41 @@ func handleGetUserById(db *sql.DB) httprouter.Handle {
 		}
 
 		writeResponse(200, &jsonUser, w)
+	}
+}
+
+func handleLogin(db *sql.DB) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		body, err := ioutil.ReadAll(r.Body)
+		if check(err, 400, "Request body failed to be read", w) {
+			return
+		}
+
+		login := struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}{}
+
+		err = json.Unmarshal(body, &login)
+		if check(err, 422, "Request body could not be parsed", w) {
+			return
+		}
+
+		user, err := storage.GetUserByPersonalLogin(db, login.Username)
+		if check(err, 404, "User not found", w) {
+			return
+		}
+
+		answer := authentication.CheckPassword(user.HashedPw, login.Password)
+
+		var answerText []byte
+
+		if answer {
+			answerText = []byte("true")
+		} else {
+			answerText = []byte("false")
+		}
+
+		writeResponse(200, &answerText, w)
 	}
 }

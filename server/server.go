@@ -64,6 +64,7 @@ func (s *Server) SetRoutes() {
 	// Users
 	s.Router.GET("/user", handleGetAllUsers(s.Db))
 	s.Router.GET("/user/id/:id", handleGetUserById(s.Db))
+	s.Router.PUT("/user", handleLogin(s.Db))
 
 	// Images
 }

@@ -19,12 +19,12 @@ func handleGetAllPosts(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		jsonPosts, err := json.Marshal(posts)
+		jsonPosts, err := json.Marshal(&posts)
 		if check(err, 500, "Server error loading posts", w) {
 			return
 		}
 
-		writeResponse(200, jsonPosts, w)
+		writeResponse(200, &jsonPosts, w)
 	}
 }
 
@@ -35,12 +35,12 @@ func handleGetAllFavoritePosts(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		jsonPosts, err := json.Marshal(posts)
-		if check(err, 500, "Server error loading post", w) {
+		jsonPosts, err := json.Marshal(&posts)
+		if check(err, 500, "Server error loading posts", w) {
 			return
 		}
 
-		writeResponse(200, jsonPosts, w)
+		writeResponse(200, &jsonPosts, w)
 	}
 }
 
@@ -51,9 +51,12 @@ func handleGetPostById(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		jsonPost, err := json.Marshal(post)
+		jsonPost, err := json.Marshal(&post)
+		if check(err, 500, "Server error loading post", w) {
+			return
+		}
 
-		writeResponse(200, jsonPost, w)
+		writeResponse(200, &jsonPost, w)
 	}
 }
 
@@ -64,9 +67,12 @@ func handleGetPostByTag(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		jsonPost, err := json.Marshal(post)
+		jsonPost, err := json.Marshal(&post)
+		if check(err, 500, "Server error loading post", w) {
+			return
+		}
 
-		writeResponse(200, jsonPost, w)
+		writeResponse(200, &jsonPost, w)
 	}
 }
 
@@ -86,7 +92,7 @@ func handleCreatePost(db *sql.DB) httprouter.Handle {
 
 		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
 
-		completedPost, err := storage.CreatePost(db, &post)
+		completedPost, err := storage.CreatePost(db, post.Tag, post.Title, post.ContentMD, post.ContentHTML, post.Published, post.Edited, post.IsFavorite, post.Author)
 		if check(err, 500, "Internal server error", w) {
 			return
 		}
@@ -96,7 +102,7 @@ func handleCreatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		writeResponse(201, completedPostJson, w)
+		writeResponse(201, &completedPostJson, w)
 	}
 }
 
@@ -116,7 +122,7 @@ func handleUpdatePost(db *sql.DB) httprouter.Handle {
 
 		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
 
-		completedPost, err := storage.UpdatePost(db, &post, uuid.FromStringOrNil(p.ByName("id")))
+		completedPost, err := storage.UpdatePost(db, uuid.FromStringOrNil(p.ByName("id")), post.Tag, post.Title, post.ContentMD, post.ContentHTML, post.Published, post.Edited, post.IsFavorite, post.Author)
 		if check(err, 500, "Internal server error", w) {
 			return
 		}
@@ -126,6 +132,6 @@ func handleUpdatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		writeResponse(200, completedPostJson, w)
+		writeResponse(200, &completedPostJson, w)
 	}
 }

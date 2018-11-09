@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
+	"time"
 )
 
 const sqlGetAllPosts string = `SELECT id, tag, title, published, is_favorite FROM posts`
@@ -83,30 +84,20 @@ func GetPostByTag(db *sql.DB, tag string) (*models.Post, error) {
 	return &post, nil
 }
 
-func CreatePost(db *sql.DB, post *models.Post) (*models.Post, error) {
+func CreatePost(db *sql.DB, tag, title, contentMD, contentHTML string, published, edited *time.Time, isFavorite bool, author uuid.UUID) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
 		return nil, err
 	}
 
-	id, err := uuid.NewV4()
+	_id, err := uuid.NewV4()
 	if err != nil {
 		writeDB.Rollback()
 		return nil, err
 	}
 
-	_, err = writeDB.Exec(
-		sqlCreatePost,
-		id,
-		post.Tag,
-		post.Title,
-		post.ContentMD,
-		post.ContentHTML,
-		post.Published,
-		post.Edited,
-		post.IsFavorite,
-		post.Author)
+	_, err = writeDB.Exec(sqlCreatePost, _id, tag, title, contentMD, contentHTML, published, edited, isFavorite, author)
 	if err != nil {
 		writeDB.Rollback()
 		return nil, err
@@ -116,27 +107,17 @@ func CreatePost(db *sql.DB, post *models.Post) (*models.Post, error) {
 		return nil, err
 	}
 
-	return GetPostById(db, id)
+	return GetPostById(db, _id)
 }
 
-func UpdatePost(db *sql.DB, post *models.Post, id uuid.UUID) (*models.Post, error) {
+func UpdatePost(db *sql.DB, id uuid.UUID, tag, title, contentMD, contentHTML string, published, edited *time.Time, isFavorite bool, author uuid.UUID) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
 		return nil, err
 	}
 
-	_, err = writeDB.Exec(
-		sqlUpdatePost,
-		post.Tag,
-		post.Title,
-		post.ContentMD,
-		post.ContentHTML,
-		post.Published,
-		post.Edited,
-		post.IsFavorite,
-		post.Author,
-		id)
+	_, err = writeDB.Exec(sqlUpdatePost, tag, title, contentMD, contentHTML, published, edited, isFavorite, author, id)
 	if err != nil {
 		writeDB.Rollback()
 		return nil, err

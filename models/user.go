@@ -11,5 +11,4 @@ type User struct {
 	CatchPhrase string    `json:"catchPhrase"`
 	Login       string    `json:"-"`
 	HashedPw    string    `json:"-"`
-	Salt        string    `json:"-"`
 }

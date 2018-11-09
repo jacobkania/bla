@@ -16,7 +16,7 @@ func check(err error, statusCode int, message string, w http.ResponseWriter) boo
 	return false
 }
 
-func writeResponse(statusCode int, response []byte, w http.ResponseWriter) {
+func writeResponse(statusCode int, response *[]byte, w http.ResponseWriter) {
 	w.WriteHeader(statusCode)
-	fmt.Fprint(w, string(response))
+	fmt.Fprint(w, string(*response))
 }

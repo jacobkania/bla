@@ -60,8 +60,7 @@ func initializeUsers(db *sql.Tx) error {
 			location TEXT,
 			catch_phrase TEXT,
 			login TEXT,
-			hashed_pw TEXT,
-			salt TEXT	
+			hashed_pw TEXT
 		);
 	`
 

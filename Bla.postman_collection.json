@@ -174,7 +174,66 @@
 		},
 		{
 			"name": "Users",
-			"item": []
+			"item": [
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3e868c11-95ff-489c-98c9-a877b2f3e08b",
+								"exec": [
+									"uuid = pm.response.json().at(0).id",
+									"",
+									"pm.environment.set(\"user_uuid_1\", uuid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/id/{{user_uuid_1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"id",
+								"{{user_uuid_1}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Images",
@@ -183,7 +242,7 @@
 	],
 	"variable": [
 		{
-			"id": "881d9a9d-456f-4cac-8269-37333c86cef8",
+			"id": "1b12ead0-5434-4149-ab78-0476ad8eaa28",
 			"key": "baseUrl",
 			"value": "http://localhost:8081",
 			"type": "string"

@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "f389b974-851f-4ba9-ae83-54dfbbd1dff5",
+		"name": "Bla",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3e868c11-95ff-489c-98c9-a877b2f3e08b",
+								"exec": [
+									"uuid = pm.response.json().at(0).id",
+									"tag = pm.response.json().at(0).tag",
+									"",
+									"pm.environment.set(\"post_tag_1\", tag);",
+									"pm.environment.set(\"post_uuid_1\", uuid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/post",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Favorite Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/post/id/{{post_uuid_1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"post",
+								"id",
+								"{{post_uuid_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by Tag",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/post/tag/{{post_tag_1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"post",
+								"tag",
+								"{{post_tag_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\":\"This is title\",\n\t\"tag\":\"intro\",\n\t\"contentMd\":\"# Content\\n\\nThis is my text\\n\\n* bulleted\\n* list\",\n\t\"isFavorite\":false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/post",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\":\"New Title?!\",\n\t\"tag\":\"intro\",\n\t\"contentMd\":\"# Whoa new text\\n\\nThis is great\",\n\t\"isFavorite\":true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/post/id/{{post_uuid_1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"post",
+								"id",
+								"{{post_uuid_1}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": []
+		},
+		{
+			"name": "Images",
+			"item": []
+		}
+	],
+	"variable": [
+		{
+			"id": "881d9a9d-456f-4cac-8269-37333c86cef8",
+			"key": "baseUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		}
+	]
+}

@@ -3,16 +3,17 @@ package storage
 import (
 	"bla/models"
 	"database/sql"
+	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const sqlGetAllPosts string = `SELECT tag, title, published FROM posts`
-const sqlGetAllFavoritePosts string = `SELECT tag, title, published FROM posts WHERE is_favorite = TRUE`
+const sqlGetAllPosts string = `SELECT id, tag, title, published FROM posts`
+const sqlGetAllFavoritePosts string = `SELECT id, tag, title, published FROM posts WHERE is_favorite = TRUE`
 const sqlGetPostById string = `SELECT id, tag, title, content_md, content_html, published, edited, is_favorite, author FROM posts WHERE id = ?`
 const sqlGetPostByTag string = `SELECT id, tag, title, content_md, content_html, published, edited, is_favorite, author FROM posts WHERE tag = ?`
 
 const sqlCreatePost string = `INSERT INTO posts (id, tag, title, content_md, content_html, published, edited, is_favorite, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ?`
+const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ? WHERE id = ?`
 
 func GetAllPosts(db *sql.DB) (*[]models.PostLite, error) {
 	//db, err := sql.Open("sqlite3", "./content/data/bla.db")
@@ -26,7 +27,7 @@ func GetAllPosts(db *sql.DB) (*[]models.PostLite, error) {
 
 	for rows.Next() {
 		post := models.PostLite{}
-		err = rows.Scan(&post.Tag, &post.Title, &post.Published)
+		err = rows.Scan(&post.Id, &post.Tag, &post.Title, &post.Published)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +48,7 @@ func GetAllFavoritePosts(db *sql.DB) (*[]models.PostLite, error) {
 
 	for rows.Next() {
 		post := models.PostLite{}
-		err = rows.Scan(&post.Tag, &post.Title, &post.Published)
+		err = rows.Scan(&post.Id, &post.Tag, &post.Title, &post.Published)
 		if err != nil {
 			return nil, err
 		}
@@ -57,7 +58,7 @@ func GetAllFavoritePosts(db *sql.DB) (*[]models.PostLite, error) {
 	return &posts, nil
 }
 
-func GetPostById(db *sql.DB, id string) (*models.Post, error) {
+func GetPostById(db *sql.DB, id uuid.UUID) (*models.Post, error) {
 	row := db.QueryRow(sqlGetPostById, id)
 
 	post := models.Post{}
@@ -83,16 +84,22 @@ func GetPostByTag(db *sql.DB, tag string) (*models.Post, error) {
 	return &post, nil
 }
 
-func CreatePost(db *sql.DB, post *models.Post) error {
+func CreatePost(db *sql.DB, post *models.Post) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
-		return err
+		return nil, err
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		writeDB.Rollback()
+		return nil, err
 	}
 
 	_, err = writeDB.Exec(
 		sqlCreatePost,
-		post.Id,
+		id,
 		post.Tag,
 		post.Title,
 		post.ContentMD,
@@ -103,17 +110,21 @@ func CreatePost(db *sql.DB, post *models.Post) error {
 		post.Author)
 	if err != nil {
 		writeDB.Rollback()
-		return err
+		return nil, err
 	}
 
-	return writeDB.Commit()
+	if err = writeDB.Commit(); err != nil {
+		return nil, err
+	}
+
+	return GetPostById(db, id)
 }
 
-func UpdatePost(db *sql.DB, post *models.Post) error {
+func UpdatePost(db *sql.DB, post *models.Post, id uuid.UUID) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {
 		writeDB.Rollback()
-		return err
+		return nil, err
 	}
 
 	_, err = writeDB.Exec(
@@ -125,11 +136,16 @@ func UpdatePost(db *sql.DB, post *models.Post) error {
 		post.Published,
 		post.Edited,
 		post.IsFavorite,
-		post.Author)
+		post.Author,
+		id)
 	if err != nil {
 		writeDB.Rollback()
-		return err
+		return nil, err
 	}
 
-	return writeDB.Commit()
+	if err = writeDB.Commit(); err != nil {
+		return nil, err
+	}
+
+	return GetPostById(db, id)
 }

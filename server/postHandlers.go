@@ -5,9 +5,9 @@ import (
 	"bla/storage"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/julienschmidt/httprouter"
+	"gopkg.in/russross/blackfriday.v2"
 	"io/ioutil"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func handleGetAllPosts(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		fmt.Fprintf(w, string(jsonPosts))
+		writeResponse(200, jsonPosts, w)
 	}
 }
 
@@ -40,20 +40,20 @@ func handleGetAllFavoritePosts(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		fmt.Fprintf(w, string(jsonPosts))
+		writeResponse(200, jsonPosts, w)
 	}
 }
 
 func handleGetPostById(db *sql.DB) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		post, err := storage.GetPostById(db, p.ByName("id"))
+		post, err := storage.GetPostById(db, uuid.FromStringOrNil(p.ByName("id")))
 		if check(err, 404, "Couldn't get post", w) {
 			return
 		}
 
 		jsonPost, err := json.Marshal(post)
 
-		fmt.Fprintf(w, string(jsonPost))
+		writeResponse(200, jsonPost, w)
 	}
 }
 
@@ -66,7 +66,7 @@ func handleGetPostByTag(db *sql.DB) httprouter.Handle {
 
 		jsonPost, err := json.Marshal(post)
 
-		fmt.Fprintf(w, string(jsonPost))
+		writeResponse(200, jsonPost, w)
 	}
 }
 
@@ -84,17 +84,19 @@ func handleCreatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		id, err := uuid.NewV4()
-		if check(err, 500, "Error generating unique post ID", w) {
-			return
-		}
+		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
 
-		post.Id = id
-
-		err = storage.CreatePost(db, &post)
+		completedPost, err := storage.CreatePost(db, &post)
 		if check(err, 500, "Internal server error", w) {
 			return
 		}
+
+		completedPostJson, err := json.Marshal(completedPost)
+		if check(err, 500, "JSON parsing error, data may be corrupted", w) {
+			return
+		}
+
+		writeResponse(201, completedPostJson, w)
 	}
 }
 
@@ -112,9 +114,18 @@ func handleUpdatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		err = storage.UpdatePost(db, &post)
+		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
+
+		completedPost, err := storage.UpdatePost(db, &post, uuid.FromStringOrNil(p.ByName("id")))
 		if check(err, 500, "Internal server error", w) {
 			return
 		}
+
+		completedPostJson, err := json.Marshal(completedPost)
+		if check(err, 500, "JSON parsing error, data may be corrupted", w) {
+			return
+		}
+
+		writeResponse(200, completedPostJson, w)
 	}
 }

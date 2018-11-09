@@ -6,8 +6,9 @@ import (
 )
 
 type PostLite struct {
-	Id        uuid.UUID  `json:"id"`
-	Tag       string     `json:"tag"`
-	Title     string     `json:"title"`
-	Published *time.Time `json:"published"`
+	Id         uuid.UUID  `json:"id"`
+	Tag        string     `json:"tag"`
+	Title      string     `json:"title"`
+	Published  *time.Time `json:"published"`
+	IsFavorite bool       `json:"isFavorite"`
 }

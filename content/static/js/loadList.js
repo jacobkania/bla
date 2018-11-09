@@ -1,4 +1,5 @@
 const baseUrl = 'http://localhost:8081/post';
+const favoriteUrl = 'http://localhost:8081/favorite';
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function formatDateFromString(dateString) {
@@ -20,21 +21,21 @@ function generateListItem(item) {
     wrapper.setAttribute('class', 'item-wrapper');
 
     var link = document.createElement('a');
-    link.setAttribute('href', '/page/' + item.Id);
+    link.setAttribute('href', '/page/' + item.tag);
 
     var dateItem = document.createElement('span');
     dateItem.setAttribute('class', 'item-date');
 
-    var dateText = document.createTextNode(formatDateFromString(item.Created));
+    var dateText = document.createTextNode(formatDateFromString(item.published));
 
     dateItem.appendChild(dateText);
     link.appendChild(dateItem);
 
     var fav = document.createElement('span');
     fav.setAttribute('class', 'item-fav');
-    if (item.Favorite) {
+    if (item.isFavorite) {
         var favImg = document.createElement('img');
-        favImg.setAttribute('src', 'static/img/star.png');
+        favImg.setAttribute('src', '/img/star.png');
         favImg.setAttribute('width', '16');
         favImg.setAttribute('height', '16');
         favImg.setAttribute('alt', 'favorite');
@@ -46,7 +47,7 @@ function generateListItem(item) {
     var title = document.createElement('span');
     title.setAttribute('class', 'item-title');
 
-    var titleText = document.createTextNode(item.Title);
+    var titleText = document.createTextNode(item.title);
 
     title.appendChild(titleText);
     link.appendChild(title);
@@ -57,7 +58,7 @@ function generateListItem(item) {
 }
 
 function putContentInPage(data) {
-    data.sort((a, b) => Date.parse(a.Created) < Date.parse(b.Created));
+    data.sort((a, b) => Date.parse(a.published) < Date.parse(b.published));
     data.forEach(item => {
         document.getElementById('items').appendChild(generateListItem(item));
     });

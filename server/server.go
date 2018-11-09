@@ -44,7 +44,14 @@ func (s *Server) NewServer(serverAddress string) {
 
 func (s *Server) SetRoutes() {
 	// HTML pages
-	s.Router.GET("/", handleIndex)
+	s.Router.GET("/", handleIndex())
+	s.Router.GET("/page/:tag", handlePage())
+	s.Router.GET("/favicon.ico", handleFavicon())
+	s.Router.ServeFiles("/p/*filepath", http.Dir("./content/pages"))
+	s.Router.ServeFiles("/css/*filepath", http.Dir("./content/static/css"))
+	s.Router.ServeFiles("/js/*filepath", http.Dir("./content/static/js"))
+	s.Router.ServeFiles("/img/*filepath", http.Dir("./content/static/img"))
+	s.Router.ServeFiles("/image/*filepath", http.Dir("./content/image"))
 
 	// Posts
 	s.Router.GET("/post", handleGetAllPosts(s.Db))
@@ -59,6 +66,20 @@ func (s *Server) SetRoutes() {
 	// Images
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	http.ServeFile(w, r, "./content/static/index.html")
+func handleIndex() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		http.ServeFile(w, r, "./content/static/index.html")
+	}
+}
+
+func handlePage() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		http.ServeFile(w, r, "./content/static/page.html")
+	}
+}
+
+func handleFavicon() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		http.ServeFile(w, r, "./content/static/img/favicon.ico")
+	}
 }

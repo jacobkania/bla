@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bla/authentication"
 	"bla/models"
 	"bla/storage"
 	"database/sql"
@@ -10,6 +11,7 @@ import (
 	"gopkg.in/russross/blackfriday.v2"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 func handleGetAllPosts(db *sql.DB) httprouter.Handle {
@@ -83,15 +85,39 @@ func handleCreatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		post := models.Post{}
+		postWithPassword := struct {
+			Post     models.Post `json:"post"`
+			Username string      `json:"username"`
+			Password string      `json:"password"`
+		}{}
 
-		err = json.Unmarshal(body, &post)
+		err = json.Unmarshal(body, &postWithPassword)
 		if check(err, 422, "Request body could not be parsed", w) {
 			return
 		}
 
-		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
+		// verify login
+		user, err := storage.GetUserByPersonalLogin(db, postWithPassword.Username)
 
+		if err != nil || !authentication.CheckPassword(user.HashedPw, postWithPassword.Password) {
+			responseText := []byte("Couldn't authenticate login")
+			writeResponse(401, &responseText, w)
+			return
+		}
+
+		// login verified, extract post
+		post := postWithPassword.Post
+
+		// set fields on the post before saving
+		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
+		post.Author = user.Id
+
+		if post.Published == nil {
+			currTime := time.Now()
+			post.Published = &currTime
+		}
+
+		// save post
 		completedPost, err := storage.CreatePost(db, post.Tag, post.Title, post.ContentMD, post.ContentHTML, post.Published, post.Edited, post.IsFavorite, post.Author)
 		if check(err, 500, "Internal server error", w) {
 			return
@@ -113,15 +139,39 @@ func handleUpdatePost(db *sql.DB) httprouter.Handle {
 			return
 		}
 
-		post := models.Post{}
+		postWithPassword := struct {
+			Post     models.Post `json:"post"`
+			Username string      `json:"username"`
+			Password string      `json:"password"`
+		}{}
 
-		err = json.Unmarshal(body, &post)
+		err = json.Unmarshal(body, &postWithPassword)
 		if check(err, 422, "Request body could not be parsed", w) {
 			return
 		}
 
-		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
+		// verify login
+		user, err := storage.GetUserByPersonalLogin(db, postWithPassword.Username)
 
+		if err != nil || !authentication.CheckPassword(user.HashedPw, postWithPassword.Password) {
+			responseText := []byte("Couldn't authenticate login")
+			writeResponse(401, &responseText, w)
+			return
+		}
+
+		// login verified, extract post
+		post := postWithPassword.Post
+
+		// set fields on the post before saving
+		post.ContentHTML = string(blackfriday.Run([]byte(post.ContentMD)))
+		post.Author = user.Id
+
+		if post.Published == nil {
+			currTime := time.Now()
+			post.Published = &currTime
+		}
+
+		// save post
 		completedPost, err := storage.UpdatePost(db, uuid.FromStringOrNil(p.ByName("id")), post.Tag, post.Title, post.ContentMD, post.ContentHTML, post.Published, post.Edited, post.IsFavorite, post.Author)
 		if check(err, 500, "Internal server error", w) {
 			return

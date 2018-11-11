@@ -70,7 +70,6 @@ func GetUserByPersonalLogin(db *sql.DB, login string) (*models.User, error) {
 	}
 
 	return &user, nil
-	return nil, nil
 }
 
 func CreateUser(db *sql.DB, firstName, lastName, email, location, catchPhrase, login, hashedPw string) (*models.User, error) {

@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<title>Blog</title>
+        <link href="/css/navbar.css" rel="stylesheet" type="text/css">
+        <link href="/css/admin.css" rel="stylesheet" type="text/css">
+		<script src="/js/loadAdmin.js"></script>
+
+		<link href="https://fonts.googleapis.com/css?family=Saira:400,800" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
+
+		<link href="/css/prism.css" rel="stylesheet" type="text/css">
+        <script src="/js/prism.js"></script>
+	</head>
+	<body>
+		<div class="page">
+			<div class="navbar">
+				<div class="header">
+					<a href="/">Jacob Kania</a>
+				</div>
+				<div class="links">
+					<ul>
+                        <li>
+                            <a href="/favorites">Favorites</a>
+                        </li>
+                        <li>
+                            <a href="http://jacobkania.com">About</a>
+                        </li>
+					</ul>
+				</div>
+			</div>
+            <div class="info-title" id="title">
+                <label for="title-field">Title</label>
+                <input type="text" id="title-field" name="title-field">
+            </div>
+            <div class="info-content" id="post">
+                <label for="content-field">Content</label>
+                <textarea id="content-field" name="content-field"></textarea>
+            </div>
+            <div class="info-created">
+                <span id="created-date">
+                <input type="date" id="created-field" name="created-field">
+                </span>
+            </div>
+            <div class="info-edited">
+                <input type="date" id="edited-field" name="edited-field">
+            </div>
+            <div class="info-tag" id="tag">
+                <label for="tag-field">Tag</label>
+                <input type="text" id="tag-field" name="tag-field">
+            </div>
+            <div class="info-login">
+                <input type="text" id="login-field" name="login-field" placeholder="Login">
+                <input type="text" id="password-field" name="password-field" placeholder="Password">
+
+            </div>
+            <div class="submit-button">
+                <button id="submit-form" onclick="submitForm()">Submit</button>
+            </div>
+		</div>
+	</body>
+</html>

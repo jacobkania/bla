@@ -67,6 +67,10 @@ func (s *Server) SetRoutes() {
 	s.Router.PUT("/user", handleLogin(s.Db))
 
 	// Images
+
+	// Admin
+	s.Router.GET("/admin", handleAdminPage())
+	s.Router.GET("/page/:tag/admin", handleAdminPage())
 }
 
 func handleIndex() httprouter.Handle {
@@ -84,5 +88,11 @@ func handlePage() httprouter.Handle {
 func handleFavicon() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.ServeFile(w, r, "./content/static/img/favicon.ico")
+	}
+}
+
+func handleAdminPage() httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		http.ServeFile(w, r, "./content/static/admin.html")
 	}
 }

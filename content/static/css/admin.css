@@ -1,0 +1,85 @@
+.page {
+    width: 1000px;
+    background-color: #fff;
+    margin: auto;
+    font-family: 'Open Sans',sans-serif;
+    padding-bottom: 32px;
+}
+
+body {
+    background-color: #113e6c !important;
+}
+
+.info-title {
+    margin: 20px 5%;
+}
+
+.info-content {
+    margin: 20px 5%;
+}
+
+.info-author {
+    text-align: right;
+    margin-right: 32px;
+    margin-left: 32px;
+    margin-top: 16px;
+    font-weight: 600;
+    border-top: 2px solid;
+}
+
+.info-created {
+    margin: 20px 5%;
+}
+
+.info-edited {
+    margin: 20px 5%;
+}
+
+.info-tag {
+    margin: 20px 5%;
+}
+
+.info-login {
+    margin: 20px 5%;
+}
+
+.submit-button {
+    text-align: right;
+    margin-right: 32px;
+    margin-left: 32px;
+}
+
+#title-field {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+#content-field {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    min-height: 300px;
+    resize: vertical;
+}
+
+#created-field {
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+#edited-field {
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+#tag-field {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}

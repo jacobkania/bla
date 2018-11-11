@@ -12,17 +12,17 @@ const post = {
     id: ""
 };
 
-function formatDateFromString(dateString) {
-    var date = new Date(dateString);
+function createDateStringFromFullDate(fullDateString) {
+    if (!fullDateString)
+        return null;
+
+    var date = new Date(fullDateString);
 
     var year = date.getFullYear();
 
-    // var month = (date.getMonth() + 1).toString();
-    // month = month.length > 1 ? month : '0' + month;
-    var month = monthNames[date.getMonth()];
+    var month = date.getMonth() + 1;
 
     var day = date.getDate().toString();
-    day = day.length > 1 ? day : '0' + day;
 
     return year + '-' + month + '-' + day;
 }
@@ -42,8 +42,8 @@ function putContentInPage() {
     document.title = "Admin | " + post.title;
     document.getElementById("title-field").value = post.title;
     document.getElementById("content-field").value = post.contentMd;
-    document.getElementById("created-field").value = post.published ? formatDateFromString(post.published) : '';
-    document.getElementById("edited-field").value = post.edited ? formatDateFromString(post.edited) : '';
+    document.getElementById("created-field").value = post.published ? createDateStringFromFullDate(post.published) : '';
+    document.getElementById("edited-field").value = post.edited ? createDateStringFromFullDate(post.edited) : '';
     document.getElementById("tag-field").value = post.tag;
 }
 

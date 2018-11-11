@@ -1,5 +1,7 @@
-const baseUrl = 'https://localhost:8081/post/tag/';
-const authorUrl = 'https://localhost:8081/user/id/';
+import {SERVER_URL} from "./config.js";
+
+const postTagUrl = SERVER_URL + '/post/tag/';
+const authorUrl = SERVER_URL + '/user/id/';
 const postId = window.location.pathname.split('/')[2];
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -46,7 +48,7 @@ function getAuthorById(id) {
         })
 }
 
-fetch(baseUrl + postId)
+fetch(postTagUrl + postId)
     .then((res) => res.json())
     .then((data) => {
         post.title = data.title;

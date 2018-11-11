@@ -1,14 +1,17 @@
 package server
 
 import (
+	"bla/configuration"
 	"crypto/tls"
 	"database/sql"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"strconv"
 	"time"
 )
 
 type Server struct {
+	Config      *configuration.Configuration
 	Router      *httprouter.Router
 	Db          *sql.DB
 	HttpsServer *http.Server
@@ -16,12 +19,17 @@ type Server struct {
 }
 
 func (s *Server) Run() error {
+	httpUrl := s.Config.ServerUrl + ":" + strconv.Itoa(s.Config.HttpPort)
+	httpsUrl := s.Config.ServerUrl + ":" + strconv.Itoa(s.Config.HttpsPort)
+
+	s.setRoutes()
+	s.newServer(httpsUrl, httpUrl)
+
 	go s.HttpServer.ListenAndServe()
-	return s.HttpsServer.ListenAndServeTLS("./content/certificates/cert.pem", "./content/certificates/key.pem")
+	return s.HttpsServer.ListenAndServeTLS(s.Config.CertFile, s.Config.KeyFile)
 }
 
-func (s *Server) NewServer(tlsServerAddress string, redirectServerAddress string) {
-
+func (s *Server) newServer(tlsServerAddress string, redirectServerAddress string) {
 	s.HttpsServer = &http.Server{
 		Addr:         tlsServerAddress,
 		Handler:      s.Router,
@@ -52,7 +60,7 @@ func (s *Server) NewServer(tlsServerAddress string, redirectServerAddress string
 	}
 }
 
-func (s *Server) SetRoutes() {
+func (s *Server) setRoutes() {
 	// HTML pages
 	s.Router.GET("/", handleIndex())
 	s.Router.GET("/page/:tag", handlePage())

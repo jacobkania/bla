@@ -1,7 +1,9 @@
-const baseUrl = 'https://localhost:8081/post/tag/';
+import {SERVER_URL} from "./config.js";
+
+const baseUrl = SERVER_URL + '/post/tag/';
+const pageUrl = SERVER_URL + '/page/';
+const postUrl = SERVER_URL + '/post';
 const postTag = window.location.pathname.split('/')[2];
-const postUrl = 'https://localhost:8081/post';
-const pageUrl = 'https://localhost:8081/page/';
 
 const post = {
     title: "",
@@ -29,9 +31,9 @@ function createDateFromDashSeparatedString(dateString) {
     if (!dateString)
         return null;
 
-    year = Number(dateString.split('-')[0]);
-    month = Number(dateString.split('-')[1]);
-    day = Number(dateString.split('-')[2]);
+    let year = Number(dateString.split('-')[0]);
+    let month = Number(dateString.split('-')[1]);
+    let day = Number(dateString.split('-')[2]);
 
     return new Date(year, month - 1, day);
 }

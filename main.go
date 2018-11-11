@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bla/configuration"
 	"bla/initialize"
 	"bla/server"
 	"database/sql"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	config := configuration.Load()
+
 	router := httprouter.New()
 
 	db, err := sql.Open("sqlite3", "./content/data/bla.db")
@@ -22,12 +25,10 @@ func main() {
 	}
 
 	srv := server.Server{
+		Config: config,
 		Router: router,
 		Db:     db,
 	}
-
-	srv.SetRoutes()
-	srv.NewServer(":8081", ":8080")
 
 	log.Fatal(srv.Run())
 }

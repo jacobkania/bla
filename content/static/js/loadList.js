@@ -1,5 +1,6 @@
-const baseUrl = 'https://localhost:8081/post';
-const favoriteUrl = 'https://localhost:8081/favorite';
+import {SERVER_URL} from "./config.js";
+
+const postUrl = SERVER_URL + '/post';
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function formatDateFromString(dateString) {
@@ -64,6 +65,6 @@ function putContentInPage(data) {
     });
 }
 
-fetch(baseUrl)
+fetch(postUrl)
     .then((res) => res.json())
     .then((data) => putContentInPage(data));

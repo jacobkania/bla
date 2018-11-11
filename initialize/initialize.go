@@ -17,9 +17,6 @@ func Initialize(db *sql.DB) error {
 	if err := promptUserInfo(db); err != nil {
 		return err
 	}
-	if err := createConfig(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -58,13 +55,6 @@ func promptUserInfo(db *sql.DB) error {
 	}
 
 	fmt.Printf("User %s created successfully.", newUser.FirstName)
-
-	return nil
-}
-
-func createConfig() error {
-	// creates the config file for basic config info
-	// in content/data/config.json
 
 	return nil
 }

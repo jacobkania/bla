@@ -1,7 +1,6 @@
 const baseUrl = 'http://localhost:8081/post/tag/';
 const postTag = window.location.pathname.split('/')[2];
 const postUrl = 'http://localhost:8081/post';
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const post = {
     title: "",
@@ -12,17 +11,17 @@ const post = {
     id: ""
 };
 
-function createDateStringFromFullDate(fullDateString) {
-    if (!fullDateString)
+function createDateStringFromFullDate(fullDate) {
+    if (!fullDate)
         return null;
 
-    var date = new Date(fullDateString);
+    console.log(fullDate);
 
-    var year = date.getFullYear();
+    var year = fullDate.getFullYear();
 
-    var month = date.getMonth() + 1;
+    var month = fullDate.getMonth() + 1;
 
-    var day = date.getDate().toString();
+    var day = fullDate.getDate().toString();
 
     return year + '-' + month + '-' + day;
 }
@@ -102,8 +101,8 @@ if (window.location.pathname !== "/admin") {
         .then((data) => {
             post.title = data.title;
             post.contentMd = data.contentMd;
-            post.published = Date(data.published);
-            post.edited = Date(data.edited);
+            post.published = new Date(data.published);
+            post.edited = data.edited ? new Date(data.edited) : null;
             post.tag = data.tag;
             post.id = data.id;
         })

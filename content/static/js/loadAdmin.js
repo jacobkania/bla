@@ -110,3 +110,5 @@ if (window.location.pathname !== "/admin") {
         })
         .then(() => putContentInPage());
 }
+
+document.getElementById("submit-form").onclick = () => submitForm();

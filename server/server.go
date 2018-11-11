@@ -19,8 +19,8 @@ type Server struct {
 }
 
 func (s *Server) Run() error {
-	httpUrl := s.Config.ServerUrl + ":" + strconv.Itoa(s.Config.HttpPort)
-	httpsUrl := s.Config.ServerUrl + ":" + strconv.Itoa(s.Config.HttpsPort)
+	httpUrl := ":" + strconv.Itoa(s.Config.HttpPort)
+	httpsUrl := ":" + strconv.Itoa(s.Config.HttpsPort)
 
 	s.setRoutes()
 	s.newServer(httpsUrl, httpUrl)

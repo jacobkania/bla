@@ -1,6 +1,17 @@
 const baseUrl = 'https://localhost:8081/post/tag/';
+const authorUrl = 'https://localhost:8081/user/id/';
 const postId = window.location.pathname.split('/')[2];
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const post = {
+    title: "",
+    contentHtml: "",
+    published: Date(),
+    edited: Date(),
+    tag: "",
+    id: "",
+    author: ""
+};
 
 function formatDateFromString(dateString) {
     var date = new Date(dateString);
@@ -17,18 +28,35 @@ function formatDateFromString(dateString) {
     return year + '-' + month + '-' + day;
 }
 
-function putContentInPage(data) {
-    document.getElementById("post").innerHTML = data.contentHtml;
-    document.title = "Blog | " + data.title;
-    document.getElementById("title").innerText = data.title;
-    document.getElementById("author").innerText = data.author || '';
-    document.getElementById("created-date").innerText = data.published ? formatDateFromString(data.published) : '';
-    document.getElementsByClassName("info-edited").item(0).innerHTML = data.edited
-        ? 'Edited <span id="edited-date">' + formatDateFromString(data.edited) + '</span>'
+function putContentInPage() {
+    document.getElementById("post").innerHTML = post.contentHtml;
+    document.title = "Blog | " + post.title;
+    document.getElementById("title").innerText = post.title;
+    document.getElementById("created-date").innerText = post.published ? formatDateFromString(post.published) : '';
+    document.getElementsByClassName("info-edited").item(0).innerHTML = post.edited
+        ? 'Edited <span id="edited-date">' + formatDateFromString(post.edited) + '</span>'
         : '';
+}
+
+function getAuthorById(id) {
+    fetch(authorUrl + id)
+        .then((res) => res.json())
+        .then((data) => {
+            document.getElementById("author").innerText = data.firstName + " " + data.lastName;
+        })
 }
 
 fetch(baseUrl + postId)
     .then((res) => res.json())
-    .then((data) => putContentInPage(data))
-    .then(() => Prism.highlightAll());
+    .then((data) => {
+        post.title = data.title;
+        post.contentHtml = data.contentHtml;
+        post.published = new Date(data.published);
+        post.edited = data.edited ? new Date(data.edited) : null;
+        post.tag = data.tag;
+        post.id = data.id;
+        post.author = data.author;
+    })
+    .then(() => putContentInPage())
+    .then(() => Prism.highlightAll())
+    .then(() => getAuthorById(post.author));

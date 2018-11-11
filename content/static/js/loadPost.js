@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:8081/post/tag/';
+const baseUrl = 'https://localhost:8081/post/tag/';
 const postId = window.location.pathname.split('/')[2];
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

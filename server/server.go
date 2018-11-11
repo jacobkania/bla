@@ -9,19 +9,21 @@ import (
 )
 
 type Server struct {
-	Router     *httprouter.Router
-	Db         *sql.DB
-	HttpServer *http.Server
+	Router      *httprouter.Router
+	Db          *sql.DB
+	HttpsServer *http.Server
+	HttpServer  *http.Server
 }
 
 func (s *Server) Run() error {
-	return s.HttpServer.ListenAndServe()
+	go s.HttpServer.ListenAndServe()
+	return s.HttpsServer.ListenAndServeTLS("./content/certificates/cert.pem", "./content/certificates/key.pem")
 }
 
-func (s *Server) NewServer(serverAddress string) {
+func (s *Server) NewServer(tlsServerAddress string, redirectServerAddress string) {
 
-	s.HttpServer = &http.Server{
-		Addr:         serverAddress,
+	s.HttpsServer = &http.Server{
+		Addr:         tlsServerAddress,
 		Handler:      s.Router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -39,6 +41,14 @@ func (s *Server) NewServer(serverAddress string) {
 				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 			},
 		},
+	}
+
+	s.HttpServer = &http.Server{
+		Addr:         redirectServerAddress,
+		Handler:      redirectToHttps(tlsServerAddress),
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 }
 
@@ -94,5 +104,11 @@ func handleFavicon() httprouter.Handle {
 func handleAdminPage() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.ServeFile(w, r, "./content/static/admin.html")
+	}
+}
+
+func redirectToHttps(url string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, url+r.RequestURI, http.StatusMovedPermanently)
 	}
 }

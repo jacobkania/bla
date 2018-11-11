@@ -27,7 +27,7 @@ func main() {
 	}
 
 	srv.SetRoutes()
-	srv.NewServer(":8081")
+	srv.NewServer(":8081", ":8080")
 
 	log.Fatal(srv.Run())
 }

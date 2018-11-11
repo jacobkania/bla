@@ -1,6 +1,7 @@
-const baseUrl = 'http://localhost:8081/post/tag/';
+const baseUrl = 'https://localhost:8081/post/tag/';
 const postTag = window.location.pathname.split('/')[2];
-const postUrl = 'http://localhost:8081/post';
+const postUrl = 'https://localhost:8081/post';
+const pageUrl = 'https://localhost:8081/page/';
 
 const post = {
     title: "",
@@ -14,8 +15,6 @@ const post = {
 function createDateStringFromFullDate(fullDate) {
     if (!fullDate)
         return null;
-
-    console.log(fullDate);
 
     var year = fullDate.getFullYear();
 
@@ -50,12 +49,13 @@ function updatePost(request) {
     const Http = new XMLHttpRequest();
     Http.open("PUT", postUrl + "/id/" + post.id, true);
     Http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    console.log("Sending: ", postUrl + post.id);
     Http.send(JSON.stringify(request));
     Http.onreadystatechange=()=>{
         if (Http.readyState === 4) {
-            console.log("Completed request.. Response:");
-            console.log(Http.status);
+            if (Http.status !== 200)
+                alert("Failed to update post: " + Http.statusText);
+            else
+                window.location.href = pageUrl + post.tag;
         }
     }
 }
@@ -64,12 +64,13 @@ function createPost(request) {
     const Http = new XMLHttpRequest();
     Http.open("POST", postUrl, true);
     Http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    console.log("Sending: ", postUrl + post.id);
     Http.send(JSON.stringify(request));
     Http.onreadystatechange=()=>{
         if (Http.readyState === 4) {
-            console.log("Completed request.. Response:");
-            console.log(Http.status);
+            if (Http.status !== 201)
+                alert("Failed to create post: " + Http.statusText);
+            else
+                window.location.href = pageUrl + post.tag;
         }
     }
 }
@@ -81,7 +82,6 @@ function submitForm() {
     post.edited = createDateFromDashSeparatedString(document.getElementById("edited-field").value);
     post.tag = document.getElementById("tag-field").value;
     post.id = post.id ? post.id : null;
-    console.log(post);
 
     let request = {
         post: post,

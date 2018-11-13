@@ -14,23 +14,23 @@ type Server struct {
 	Config      *configuration.Configuration
 	Router      *httprouter.Router
 	Db          *sql.DB
-	HttpsServer *http.Server
-	HttpServer  *http.Server
+	httpsServer *http.Server
+	httpServer  *http.Server
 }
 
 func (s *Server) Run() error {
+	s.setRoutes()
+
 	httpUrl := ":" + strconv.Itoa(s.Config.HttpPort)
 	httpsUrl := ":" + strconv.Itoa(s.Config.HttpsPort)
-
-	s.setRoutes()
 	s.newServer(httpsUrl, httpUrl)
 
-	go s.HttpServer.ListenAndServe()
-	return s.HttpsServer.ListenAndServeTLS(s.Config.CertFile, s.Config.KeyFile)
+	go s.httpServer.ListenAndServe()
+	return s.httpsServer.ListenAndServeTLS(s.Config.CertFile, s.Config.KeyFile)
 }
 
 func (s *Server) newServer(tlsServerAddress string, redirectServerAddress string) {
-	s.HttpsServer = &http.Server{
+	s.httpsServer = &http.Server{
 		Addr:         tlsServerAddress,
 		Handler:      s.Router,
 		ReadTimeout:  5 * time.Second,
@@ -51,7 +51,7 @@ func (s *Server) newServer(tlsServerAddress string, redirectServerAddress string
 		},
 	}
 
-	s.HttpServer = &http.Server{
+	s.httpServer = &http.Server{
 		Addr:         redirectServerAddress,
 		Handler:      redirectToHttps(tlsServerAddress),
 		ReadTimeout:  5 * time.Second,

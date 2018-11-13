@@ -1,4 +1,4 @@
-package initialize
+package main
 
 import (
 	"bla/authentication"
@@ -9,8 +9,10 @@ import (
 	"os"
 )
 
+// Runs the commands necessary for first-time setup of the application. This creates the necessary
+// tables in the database if they don't exist, and prompts for admin user info if no user exists.
+// It is completely safe to run this method when data and users already exist, as it is non-destructive.
 func Initialize(db *sql.DB) error {
-	// do all of the setup for first time running the application
 	if err := createDB(db); err != nil {
 		return err
 	}
@@ -20,16 +22,19 @@ func Initialize(db *sql.DB) error {
 	return nil
 }
 
+// Calls to the Initialize method in the storage package, which will initialize the database tables.
 func createDB(db *sql.DB) error {
 	return storage.Initialize(db)
 }
 
+// If no user exists in the database, prompts for the necessary user information to populate
+// an initial admin user. If any user already exists, does nothing.
 func promptUserInfo(db *sql.DB) error {
 	if count, _ := storage.GetUserCount(db); count != 0 {
 		return nil
 	}
 
-	// get user info like owner username/password
+	// get user info like username/password
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Printf("No user currently exists! Please create one:\n")
 	fmt.Printf("First name: ")

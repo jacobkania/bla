@@ -12,6 +12,7 @@ const sqlGetUserById string = `SELECT id, first_name, last_name, email, location
 const sqlGetUserByPersonalLogin string = `SELECT id, first_name, last_name, email, location, catch_phrase, login, hashed_pw FROM users WHERE login = ?`
 const sqlCreateUser string = `INSERT INTO users (id, first_name, last_name, email, location, catch_phrase, login, hashed_pw) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
+// GetUserCount returns the number of admin users which exist in the supplied database.
 func GetUserCount(db *sql.DB) (int, error) {
 	row := db.QueryRow(sqlGetUserCount)
 
@@ -25,6 +26,8 @@ func GetUserCount(db *sql.DB) (int, error) {
 	return count, nil
 }
 
+// GetAllUsers returns a slice containing the User models of all users in the supplied database.
+// The Login and Hashed Password fields are ignored.
 func GetAllUsers(db *sql.DB) (*[]models.User, error) {
 	rows, err := db.Query(sqlGetAllUsers)
 	if err != nil {
@@ -46,6 +49,8 @@ func GetAllUsers(db *sql.DB) (*[]models.User, error) {
 	return &users, nil
 }
 
+// GetUserById returns a User model containing information about the given user in the supplied database.
+// The Login and Hashed Password fields are ignored.
 func GetUserById(db *sql.DB, id uuid.UUID) (*models.User, error) {
 	row := db.QueryRow(sqlGetUserById, id)
 
@@ -59,6 +64,9 @@ func GetUserById(db *sql.DB, id uuid.UUID) (*models.User, error) {
 	return &user, nil
 }
 
+// GetUserByPersonalLogin returns a User model containing all information for the user in
+// the supplied database. This includes the user's Login and Hashed Password.
+// This method is meant to be used to retrieve information for a user attempting to authenticate with the system.
 func GetUserByPersonalLogin(db *sql.DB, login string) (*models.User, error) {
 	row := db.QueryRow(sqlGetUserByPersonalLogin, login)
 
@@ -72,6 +80,7 @@ func GetUserByPersonalLogin(db *sql.DB, login string) (*models.User, error) {
 	return &user, nil
 }
 
+// CreateUser creates a User object in the supplied database with the given information.
 func CreateUser(db *sql.DB, firstName, lastName, email, location, catchPhrase, login, hashedPw string) (*models.User, error) {
 	writeDB, err := db.Begin()
 	if err != nil {

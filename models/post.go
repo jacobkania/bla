@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Contains all information about a blog post
 type Post struct {
 	Id          uuid.UUID  `json:"id"`
 	Tag         string     `json:"tag"`

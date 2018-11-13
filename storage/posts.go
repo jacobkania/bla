@@ -16,6 +16,9 @@ const sqlGetPostByTag string = `SELECT id, tag, title, content_md, content_html,
 const sqlCreatePost string = `INSERT INTO posts (id, tag, title, content_md, content_html, published, edited, is_favorite, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ? WHERE id = ?`
 
+// GetAllPosts will contact the database that is passed into it and query for all posts.
+// It will then return a slice of PostLite objects, containing only minimal identifying information
+// about the posts, meant to be used for displaying many post titles in a list.
 func GetAllPosts(db *sql.DB) (*[]models.PostLite, error) {
 	rows, err := db.Query(sqlGetAllPosts)
 	if err != nil {
@@ -37,6 +40,8 @@ func GetAllPosts(db *sql.DB) (*[]models.PostLite, error) {
 	return &posts, nil
 }
 
+// GetAllFavoritePosts does the same thing as GetAllPosts, but only returns the posts marked as
+// IsFavorite in the database.
 func GetAllFavoritePosts(db *sql.DB) (*[]models.PostLite, error) {
 	rows, err := db.Query(sqlGetAllFavoritePosts)
 	if err != nil {
@@ -58,6 +63,7 @@ func GetAllFavoritePosts(db *sql.DB) (*[]models.PostLite, error) {
 	return &posts, nil
 }
 
+// GetPostById returns a post from the supplied database based on the given UUID.
 func GetPostById(db *sql.DB, id uuid.UUID) (*models.Post, error) {
 	row := db.QueryRow(sqlGetPostById, id)
 
@@ -71,6 +77,7 @@ func GetPostById(db *sql.DB, id uuid.UUID) (*models.Post, error) {
 	return &post, nil
 }
 
+// GetPostByTag returns a post from the supplied database based on the given tag.
 func GetPostByTag(db *sql.DB, tag string) (*models.Post, error) {
 	row := db.QueryRow(sqlGetPostByTag, tag)
 
@@ -84,6 +91,8 @@ func GetPostByTag(db *sql.DB, tag string) (*models.Post, error) {
 	return &post, nil
 }
 
+// CreatePost will add a post to the supplied database with the content specified in the method call.
+// Fields given `nil` values will be marked as `NULL` in the database.
 func CreatePost(db *sql.DB, tag, title, contentMD, contentHTML string, published, edited *time.Time, isFavorite bool, author uuid.UUID) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {
@@ -110,6 +119,8 @@ func CreatePost(db *sql.DB, tag, title, contentMD, contentHTML string, published
 	return GetPostById(db, _id)
 }
 
+// UpdatePost will update a post in the supplied database, identified by the specified UUID. It will
+// fully replace all contents of the post, except for the id field, which will always be ignored.
 func UpdatePost(db *sql.DB, id uuid.UUID, tag, title, contentMD, contentHTML string, published, edited *time.Time, isFavorite bool, author uuid.UUID) (*models.Post, error) {
 	writeDB, err := db.Begin()
 	if err != nil {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bla/configuration"
-	"bla/initialize"
 	"bla/server"
 	"database/sql"
 	"github.com/julienschmidt/httprouter"
@@ -19,7 +18,7 @@ func main() {
 		log.Fatalf("Database failed to open")
 	}
 
-	err = initialize.Initialize(db)
+	err = Initialize(db)
 	if err != nil {
 		log.Fatalf("Failed to run initialization")
 	}

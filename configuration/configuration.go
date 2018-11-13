@@ -11,6 +11,7 @@ import (
 const configFileLocation string = "./content/data/config.json"
 const jsConfigLocation string = "./content/static/js/config.js"
 
+// Contains the configuration information for the system.
 type Configuration struct {
 	ServerUrl string `json:"serverUrl"`
 	HttpPort  int    `json:"httpPort"`
@@ -19,6 +20,12 @@ type Configuration struct {
 	KeyFile   string `json:"keyFile"`
 }
 
+// The Load method opens the config.json file for the system, and extracts the configuration
+// parameters from the JSON. It then returns this completed configuration. If the config
+// file doesn't exist, it is created automatically with default settings. If there is an error
+// reading or creating the file, the system will exit with a fatal error.
+// After successfully reading (or creating) the config, this method will call sendToJsConfig
+// to export the necessary config information to the JavaScript directory.
 func Load() *Configuration {
 	configFile, err := os.Open(configFileLocation)
 	if err != nil {
@@ -55,6 +62,9 @@ func Load() *Configuration {
 	return &config
 }
 
+// sendToJsConfig creates a JavaScript file in the specified JavaScript directory,
+// containing the config information that is necessary for that JavaScript to run correctly.
+// The previously generated JavaScript file is overwritten.
 func sendToJsConfig(config *Configuration) {
 	jsText := "export const SERVER_URL = 'https://" + config.ServerUrl + ":" + strconv.Itoa(config.HttpsPort) + "';"
 

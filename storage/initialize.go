@@ -5,6 +5,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// Initialize runs initialization scripts to create the tables necessary for the blog
+// functionality. These scripts are non-destructive if data already exists.
 func Initialize(db *sql.DB) error {
 	writeDB, err := db.Begin()
 	if err != nil {

@@ -18,6 +18,8 @@ type Server struct {
 	httpServer  *http.Server
 }
 
+// The Run method will initialize everything and start the server automatically.
+// Before calling this method on a Server, you must first set the Config, Router, and Db dependencies.
 func (s *Server) Run() error {
 	s.setRoutes()
 
@@ -29,6 +31,7 @@ func (s *Server) Run() error {
 	return s.httpsServer.ListenAndServeTLS(s.Config.CertFile, s.Config.KeyFile)
 }
 
+// Initial setup for the http and https servers.
 func (s *Server) newServer(tlsServerAddress string, redirectServerAddress string) {
 	s.httpsServer = &http.Server{
 		Addr:         tlsServerAddress,
@@ -60,6 +63,7 @@ func (s *Server) newServer(tlsServerAddress string, redirectServerAddress string
 	}
 }
 
+// Creates the routes for the application. Uses handler functions from within the server package.
 func (s *Server) setRoutes() {
 	// HTML pages
 	s.Router.GET("/", handleIndex())

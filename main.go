@@ -1,8 +1,9 @@
 package main
 
 import (
-	"bla/configuration"
-	"bla/server"
+	"github.com/jacobkania/bla/configuration"
+	"github.com/jacobkania/bla/server"
+
 	"database/sql"
 	"github.com/julienschmidt/httprouter"
 	"log"

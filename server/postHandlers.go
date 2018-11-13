@@ -1,9 +1,10 @@
 package server
 
 import (
-	"bla/authentication"
-	"bla/models"
-	"bla/storage"
+	"github.com/jacobkania/bla/authentication"
+	"github.com/jacobkania/bla/models"
+	"github.com/jacobkania/bla/storage"
+
 	"database/sql"
 	"encoding/json"
 	"github.com/gofrs/uuid"

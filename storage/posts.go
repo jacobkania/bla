@@ -1,7 +1,8 @@
 package storage
 
 import (
-	"bla/models"
+	"github.com/jacobkania/bla/models"
+
 	"database/sql"
 	"github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"

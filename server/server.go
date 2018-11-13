@@ -1,7 +1,8 @@
 package server
 
 import (
-	"bla/configuration"
+	"github.com/jacobkania/bla/configuration"
+
 	"crypto/tls"
 	"database/sql"
 	"github.com/julienschmidt/httprouter"

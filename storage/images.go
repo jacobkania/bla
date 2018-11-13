@@ -1,7 +1,8 @@
 package storage
 
 import (
-	"bla/models"
+	"github.com/jacobkania/bla/models"
+
 	"time"
 )
 

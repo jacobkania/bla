@@ -1,8 +1,9 @@
 package main
 
 import (
-	"bla/authentication"
-	"bla/storage"
+	"github.com/jacobkania/bla/authentication"
+	"github.com/jacobkania/bla/storage"
+
 	"bufio"
 	"database/sql"
 	"fmt"

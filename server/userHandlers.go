@@ -2,6 +2,7 @@ package server
 
 import (
 	"bla/authentication"
+	"bla/models"
 	"bla/storage"
 	"database/sql"
 	"encoding/json"
@@ -61,8 +62,8 @@ func handleLogin(db *sql.DB) httprouter.Handle {
 		}
 
 		user, err := storage.GetUserByPersonalLogin(db, login.Username)
-		if check(err, 404, "User not found", w) {
-			return
+		if err != nil {
+			user = &models.User{HashedPw: ""}
 		}
 
 		answer := authentication.CheckPassword(user.HashedPw, login.Password)

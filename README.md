@@ -27,4 +27,4 @@ Blog posts are meant to be written in markdown, and Bla will automatically conve
 
 For an admin user, editing a blog post is just as simple as creating one. Go to https://{{domain}}/page/{{tag}}**/admin** and the existing information will be loaded into the form. You can then make any changes and submit the form again, which will overwrite the previous post with the new information.
 
-Flexibility is simple here, so you will have to manually set an edited date, if you would like the post to show that it was edited. Bla will not assume anything for you.
+Flexibility is the primary goal here, so you will have to manually set an edited date, if you would like the post to show that it was edited. Bla will not assume anything for you.

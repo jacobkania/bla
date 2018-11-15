@@ -3,7 +3,7 @@ A blog engine written in Go which emphasizes simplicity.
 
 [![GoDoc](https://godoc.org/github.com/jacobkania/bla?status.svg)](https://godoc.org/github.com/jacobkania/bla)
 
-![Bla Logo](/docs/logo.png)
+![Bla Logo](docs/logo.png)
 
 Bla is a standalone blog engine which allows for simple pages and content editing.
 

@@ -2,6 +2,7 @@
 A blog engine written in Go which emphasizes simplicity.
 
 [![GoDoc](https://godoc.org/github.com/jacobkania/bla?status.svg)](https://godoc.org/github.com/jacobkania/bla)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jacobkania/bla)](https://goreportcard.com/report/github.com/jacobkania/bla)
 
 ![Bla Logo](docs/logo.png)
 

@@ -186,3 +186,40 @@ func handleUpdatePost(db *sql.DB) httprouter.Handle {
 		writeResponse(200, &completedPostJson, w)
 	}
 }
+
+func handleDeletePost(db *sql.DB) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		body, err := ioutil.ReadAll(r.Body)
+		if check(err, 400, "Request body failed to be read", w) {
+			return
+		}
+
+		login := struct {
+			Username string      `json:"username"`
+			Password string      `json:"password"`
+		}{}
+
+		err = json.Unmarshal(body, &login)
+		if check(err, 422, "Request body could not be parsed", w) {
+			return
+		}
+
+		// verify login
+		user, err := storage.GetUserByPersonalLogin(db, login.Username)
+
+		if err != nil || !authentication.CheckPassword(user.HashedPw, login.Password) {
+			responseText := []byte("Couldn't authenticate login")
+			writeResponse(401, &responseText, w)
+			return
+		}
+
+		// login verified, delete post
+		err = storage.DeletePost(db, uuid.FromStringOrNil(p.ByName("id")))
+		if check(err, 500, "Database error deleting post", w) {
+			return
+		}
+
+		responseText := []byte("Successfully deleted post")
+		writeResponse(200, &responseText, w)
+	}
+}

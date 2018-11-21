@@ -18,6 +18,10 @@ body {
     margin: 20px 5%;
 }
 
+.info-favorite {
+    margin: 20px 5%;
+}
+
 .info-author {
     text-align: right;
     margin-right: 32px;
@@ -43,10 +47,26 @@ body {
     margin: 20px 5%;
 }
 
-.submit-button {
+.button-container {
     text-align: right;
     margin-right: 32px;
     margin-left: 32px;
+}
+
+.form-button {
+    padding: 8px 32px;
+    border: none;
+}
+
+#submit-form {
+    background-color: blue;
+    color: white;
+    margin-left: 16px;
+}
+
+#delete-form {
+    background-color: red;
+    color: black;
 }
 
 #title-field {

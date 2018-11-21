@@ -83,6 +83,7 @@ func (s *Server) setRoutes() {
 	s.Router.GET("/post/tag/:tag", handleGetPostByTag(s.Db))
 	s.Router.POST("/post", handleCreatePost(s.Db))
 	s.Router.PUT("/post/id/:id", handleUpdatePost(s.Db))
+	s.Router.DELETE("/post/id/:id", handleDeletePost(s.Db))
 
 	// Users
 	s.Router.GET("/user", handleGetAllUsers(s.Db))

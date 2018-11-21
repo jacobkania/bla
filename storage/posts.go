@@ -16,6 +16,7 @@ const sqlGetPostByTag string = `SELECT id, tag, title, content_md, content_html,
 
 const sqlCreatePost string = `INSERT INTO posts (id, tag, title, content_md, content_html, published, edited, is_favorite, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 const sqlUpdatePost string = `UPDATE posts SET tag = ?, title = ?, content_md = ?, content_html = ?, published = ?, edited = ?, is_favorite = ?, author = ? WHERE id = ?`
+const sqlDeletePost string = `DELETE FROM posts WHERE id = ?`
 
 // GetAllPosts will contact the database that is passed into it and query for all posts.
 // It will then return a slice of PostLite objects, containing only minimal identifying information
@@ -140,4 +141,24 @@ func UpdatePost(db *sql.DB, id uuid.UUID, tag, title, contentMD, contentHTML str
 	}
 
 	return GetPostById(db, id)
+}
+
+func DeletePost(db *sql.DB, id uuid.UUID) error {
+	writeDB, err := db.Begin()
+	if err != nil {
+		writeDB.Rollback()
+		return err
+	}
+
+	_, err = writeDB.Exec(sqlDeletePost, id)
+	if err != nil {
+		writeDB.Rollback()
+		return err
+	}
+
+	if err = writeDB.Commit(); err != nil {
+		return err
+	}
+
+	return nil;
 }

@@ -33,6 +33,10 @@
                 <label for="content-field">Content</label>
                 <textarea id="content-field" name="content-field"></textarea>
             </div>
+            <div class="info-favorite">
+                <label for="favorite-field">Favorite</label>
+                <input type="checkbox" id="favorite-field" name="favorite-field">
+            </div>
             <div class="info-created">
                 <label for="created-field">Created date</label>
                 <input type="date" id="created-field" name="created-field">
@@ -47,11 +51,12 @@
             </div>
             <div class="info-login">
                 <input type="text" id="login-field" name="login-field" placeholder="Login">
-                <input type="text" id="password-field" name="password-field" placeholder="Password">
+                <input type="password" id="password-field" name="password-field" placeholder="Password">
 
             </div>
-            <div class="submit-button">
-                <button id="submit-form">Submit</button>
+            <div class="button-container">
+                <button id="delete-form" class="form-button">Delete</button>
+                <button id="submit-form" class="form-button">Submit</button>
             </div>
 		</div>
 	</body>

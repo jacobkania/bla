@@ -34,7 +34,7 @@
 }
 
 .content {
-    padding: 16px 32px 0px 32px;
+    padding: 16px 32px 0 32px;
     color: #191716;
 }
 
@@ -56,4 +56,9 @@
     border: 0;
     height: 2px;
     background-image: linear-gradient(to right, #0c76e3ff, #0c76e300);
+}
+
+@media (max-width: 500px) {
+    .content {
+    }
 }

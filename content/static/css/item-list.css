@@ -9,9 +9,8 @@
     padding-left: 14px;
 }
 
-.item-list div {
+.item-wrapper {
     padding-bottom: 8px;
-    display: block;
 }
 
 .item-wrapper a {
@@ -22,15 +21,26 @@
 
 .item-date {
     display: inline-block;
-    width: 120px;
+    vertical-align: top;
+    width: 110px;
 }
 
 .item-fav {
     display: inline-block;
+    vertical-align: top;
+    margin-top: 4px;
     width: 16px;
 }
 
 .item-title {
     display: inline-block;
-    padding-left: 16px;
+    padding-left: 8px;
+    max-width: calc(100% - 152px)
+}
+
+@media (max-width: 500px) {
+    .item-list {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
 }

@@ -1,5 +1,5 @@
 .page {
-    width: 1000px;
+    max-width: 1000px;
     background-color: #fff;
     margin: auto;
     font-family: 'Open Sans',sans-serif;
@@ -8,4 +8,5 @@
 
 body {
     background-color: #113e6c !important;
+    margin: 0;
 }
